@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-yuttari-dev-135035-authRole",
+      "UnauthRoleArn": "arn:aws:iam::345312388960:role/amplify-yuttari-dev-135035-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::345312388960:role/amplify-yuttari-dev-135035-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-yuttari-dev-135035-deployment",
+      "UnauthRoleName": "amplify-yuttari-dev-135035-unauthRole",
+      "StackName": "amplify-yuttari-dev-135035",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:345312388960:stack/amplify-yuttari-dev-135035/c5052640-33bc-11ec-a910-06089b17d463",
+      "AmplifyAppId": "d31gvcg3smqejf"
+    }
+  }
+}
