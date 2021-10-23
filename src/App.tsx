@@ -1,16 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import {
-  AppBar,
-  Grid,
-  Typography,
-  Box,
-  Button,
-  FormControl,
-  Input,
-  useTheme,
-  Divider,
-} from "@material-ui/core";
+import { AppBar, Grid, Typography, Box } from "@material-ui/core";
 import API, { GraphQLResult, graphqlOperation } from "@aws-amplify/api-graphql";
 import { getCompetition, listComments } from "./graphql/queries";
 import { createComment } from "./graphql/mutations";
@@ -19,6 +9,9 @@ import * as APIt from "./API";
 import Observable from "zen-observable-ts";
 import { useParams } from "react-router";
 import { useWindowSize } from "./useWindowSize";
+import CommentComponents from "./components/Comment";
+import { Stamps } from "./components/organisms/Stamps";
+import YouTube from "react-youtube";
 
 type SubscriptionValue = {
   data: APIt.OnCreateCommentSubscription;
@@ -33,19 +26,30 @@ type Params = {
 
 function App() {
   const [competition, setCompetition] = useState<APIt.Competition>();
-
   const [comments, setComments] = useState<any[]>([]);
+  const [currentTime, setCurrentTime] = useState<number>(0);
   const { id } = useParams<Params>();
   const [createCommentInput, setCreateCommentInput] = useState<
     Partial<APIt.CreateCommentInput>
   >({ CompetitionID: id });
-  const theme = useTheme();
   const height = useWindowSize().height;
   useEffect(() => {
     fetchCompetition();
     fetchListComments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const playerRef = useRef<YouTube | null>(null);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (playerRef && playerRef.current) {
+        const player = playerRef.current.getInternalPlayer();
+        const time = await player.getCurrentTime();
+        setCurrentTime(time);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [playerRef]);
 
   // 競技情報を取得
   async function fetchCompetition() {
@@ -90,6 +94,19 @@ function App() {
     });
   };
 
+  const playAudio = () => {
+    const audioEl = document.getElementsByClassName("audio-element")[0];
+    if (!audioEl) {
+      return;
+    }
+    // HTMLAudioElement
+    // @ts-ignore
+    // audioEl.play();
+  };
+  useEffect(() => {
+    playAudio();
+  });
+
   // Subscriptionを設定
   useEffect(() => {
     const client = API.graphql(
@@ -124,83 +141,55 @@ function App() {
         <AppBar color="primary">
           <Box textAlign="start">
             <Typography variant="h3">
-              {competition ? competition.title : ""}
+              {competition ? competition.title : ""} {currentTime}
             </Typography>
           </Box>
         </AppBar>
         <Box style={{ width: "100%" }}>
           <Box mt={7} />
-          <Grid container spacing={2} style={{ width: "100%" }}>
-            <Grid xs={2}>
-              <Box
+          <Grid container style={{ width: "100%" }}>
+            <Grid item xs={2}>
+              <CommentComponents
                 height={height ? height - 56 : height}
-                bgcolor={theme.palette.grey[800]}
-              >
-                {comments.map((comment) => (
-                  <Typography>
-                    {comment.talkTime} {comment.content}
-                  </Typography>
-                ))}
-                <FormControl>
-                  <Input
-                    id="my-input"
-                    aria-describedby="my-helper-text"
-                    name={"content"}
-                    onChange={handleOnChange}
-                  />
-                </FormControl>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  onClick={useCreateComment}
-                >
-                  <Typography>語るぼたん</Typography>
-                </Button>
-              </Box>
+                comments={comments}
+                createComment={useCreateComment}
+                handleOnChange={handleOnChange}
+              />
             </Grid>
             <Grid item xs={8}>
-              <iframe
+              {/* <iframe
                 width="100%"
-                height={height ? height - 56 : height}
+                height="100%"
                 src="https://www.youtube.com/embed/-0GfAas8O-8"
                 title="YouTube video player"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              ></iframe>
+              ></iframe> */}
+              {/* <video
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/-0GfAas8O-8"
+              ></video> */}
+              <YouTube
+                ref={playerRef}
+                videoId="-0GfAas8O-8"
+                opts={{
+                  height: height ? `${height - 56}` : `${height}`,
+                  width: "100%",
+                  playerVars: {
+                    // https://developers.google.com/youtube/player_parameters
+                    autoplay: 1,
+                  },
+                }}
+                onPlaybackRateChange={(event) => {
+                  console.log(event);
+                }}
+                onStateChange={(event) => {
+                  console.log(event);
+                }}
+              ></YouTube>
             </Grid>
             <Grid item xs={2}>
-              <Box height={height ? height - 56 : height} bgcolor="#FFFFFF">
-                <Typography color="primary">スタンプ機能</Typography>
-                <Divider />
-                <Box m={1}>
-                  <Button variant="outlined" color="primary" fullWidth>
-                    （拍手）
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    うまい！
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    おしい〜
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    よし！
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    やった！
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    がんばれ！
-                  </Button>
-                  <Box mt={1} />
-                  <Button variant="outlined" color="primary" fullWidth>
-                    いける！
-                  </Button>
-                </Box>
-              </Box>
+              <Stamps height={height ? height : 300} />
             </Grid>
           </Grid>
         </Box>
