@@ -23,7 +23,7 @@ type Comment
   @key(name: "byCompetition", fields: ["CompetitionID"])
   @key(
     name: "commentsByDate"
-    fields: ["createdAt"]
+    fields: ["CompetitionID","createdAt"]
     queryField: "commentsByDate"
   ) {
   id: ID!
@@ -32,4 +32,13 @@ type Comment
   content: String!
   talkTime: Int
   createdAt: AWSDateTime!
+}
+
+type Stamp
+  @model
+  @key(name: "byCompetition", fields: ["CompetitionID"])
+ {
+  id: ID!
+  CompetitionID: ID!
+  stampID:String!
 }

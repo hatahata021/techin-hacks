@@ -177,3 +177,68 @@ export const listComments = /* GraphQL */ `
     }
   }
 `;
+export const getStamp = /* GraphQL */ `
+  query GetStamp($id: ID!) {
+    getStamp(id: $id) {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listStamps = /* GraphQL */ `
+  query ListStamps(
+    $filter: ModelStampFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listStamps(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        CompetitionID
+        stampID
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const commentsByDate = /* GraphQL */ `
+  query CommentsByDate(
+    $CompetitionID: ID
+    $createdAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelCommentFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    commentsByDate(
+      CompetitionID: $CompetitionID
+      createdAt: $createdAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        CompetitionID
+        Competition {
+          id
+          title
+          url
+          createdAt
+          updatedAt
+        }
+        content
+        talkTime
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

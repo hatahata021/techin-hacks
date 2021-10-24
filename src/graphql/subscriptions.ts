@@ -254,3 +254,36 @@ export const onDeleteComment = /* GraphQL */ `
     }
   }
 `;
+export const onCreateStamp = /* GraphQL */ `
+  subscription OnCreateStamp {
+    onCreateStamp {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateStamp = /* GraphQL */ `
+  subscription OnUpdateStamp {
+    onUpdateStamp {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteStamp = /* GraphQL */ `
+  subscription OnDeleteStamp {
+    onDeleteStamp {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;

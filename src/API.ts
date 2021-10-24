@@ -164,7 +164,7 @@ export type Comment = {
   CompetitionID: string,
   Competition?: Competition | null,
   content: string,
-  talkTime?: string | null,
+  talkTime?: number | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -183,26 +183,74 @@ export type CreateCommentInput = {
   id?: string | null,
   CompetitionID: string,
   content: string,
-  talkTime?: string | null,
+  talkTime?: number | null,
+  createdAt?: string | null,
 };
 
 export type ModelCommentConditionInput = {
   CompetitionID?: ModelIDInput | null,
   content?: ModelStringInput | null,
-  talkTime?: ModelStringInput | null,
+  talkTime?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
   and?: Array< ModelCommentConditionInput | null > | null,
   or?: Array< ModelCommentConditionInput | null > | null,
   not?: ModelCommentConditionInput | null,
+};
+
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
 };
 
 export type UpdateCommentInput = {
   id: string,
   CompetitionID?: string | null,
   content?: string | null,
-  talkTime?: string | null,
+  talkTime?: number | null,
+  createdAt?: string | null,
 };
 
 export type DeleteCommentInput = {
+  id: string,
+};
+
+export type CreateStampInput = {
+  id?: string | null,
+  CompetitionID: string,
+  stampID: string,
+};
+
+export type ModelStampConditionInput = {
+  CompetitionID?: ModelIDInput | null,
+  stampID?: ModelStringInput | null,
+  and?: Array< ModelStampConditionInput | null > | null,
+  or?: Array< ModelStampConditionInput | null > | null,
+  not?: ModelStampConditionInput | null,
+};
+
+export type Stamp = {
+  __typename: "Stamp",
+  id: string,
+  CompetitionID: string,
+  stampID: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateStampInput = {
+  id: string,
+  CompetitionID?: string | null,
+  stampID?: string | null,
+};
+
+export type DeleteStampInput = {
   id: string,
 };
 
@@ -248,11 +296,43 @@ export type ModelCommentFilterInput = {
   id?: ModelIDInput | null,
   CompetitionID?: ModelIDInput | null,
   content?: ModelStringInput | null,
-  talkTime?: ModelStringInput | null,
+  talkTime?: ModelIntInput | null,
+  createdAt?: ModelStringInput | null,
   and?: Array< ModelCommentFilterInput | null > | null,
   or?: Array< ModelCommentFilterInput | null > | null,
   not?: ModelCommentFilterInput | null,
 };
+
+export type ModelStampFilterInput = {
+  id?: ModelIDInput | null,
+  CompetitionID?: ModelIDInput | null,
+  stampID?: ModelStringInput | null,
+  and?: Array< ModelStampFilterInput | null > | null,
+  or?: Array< ModelStampFilterInput | null > | null,
+  not?: ModelStampFilterInput | null,
+};
+
+export type ModelStampConnection = {
+  __typename: "ModelStampConnection",
+  items?:  Array<Stamp | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
 
 export type CreateBlogMutationVariables = {
   input: CreateBlogInput,
@@ -434,7 +514,7 @@ export type CreateCompetitionMutation = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -463,7 +543,7 @@ export type UpdateCompetitionMutation = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -492,7 +572,7 @@ export type DeleteCompetitionMutation = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -526,7 +606,7 @@ export type CreateCommentMutation = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -555,7 +635,7 @@ export type UpdateCommentMutation = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -584,7 +664,55 @@ export type DeleteCommentMutation = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateStampMutationVariables = {
+  input: CreateStampInput,
+  condition?: ModelStampConditionInput | null,
+};
+
+export type CreateStampMutation = {
+  createStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateStampMutationVariables = {
+  input: UpdateStampInput,
+  condition?: ModelStampConditionInput | null,
+};
+
+export type UpdateStampMutation = {
+  updateStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteStampMutationVariables = {
+  input: DeleteStampInput,
+  condition?: ModelStampConditionInput | null,
+};
+
+export type DeleteStampMutation = {
+  deleteStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -711,7 +839,7 @@ export type GetCompetitionQuery = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -769,7 +897,7 @@ export type GetCommentQuery = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -797,7 +925,76 @@ export type ListCommentsQuery = {
         updatedAt: string,
       } | null,
       content: string,
-      talkTime?: string | null,
+      talkTime?: number | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetStampQueryVariables = {
+  id: string,
+};
+
+export type GetStampQuery = {
+  getStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListStampsQueryVariables = {
+  filter?: ModelStampFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListStampsQuery = {
+  listStamps?:  {
+    __typename: "ModelStampConnection",
+    items?:  Array< {
+      __typename: "Stamp",
+      id: string,
+      CompetitionID: string,
+      stampID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type CommentsByDateQueryVariables = {
+  CompetitionID?: string | null,
+  createdAt?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelCommentFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type CommentsByDateQuery = {
+  commentsByDate?:  {
+    __typename: "ModelCommentConnection",
+    items?:  Array< {
+      __typename: "Comment",
+      id: string,
+      CompetitionID: string,
+      Competition?:  {
+        __typename: "Competition",
+        id: string,
+        title: string,
+        url: string,
+        createdAt: string,
+        updatedAt: string,
+      } | null,
+      content: string,
+      talkTime?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -950,7 +1147,7 @@ export type OnCreateCompetitionSubscription = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -974,7 +1171,7 @@ export type OnUpdateCompetitionSubscription = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -998,7 +1195,7 @@ export type OnDeleteCompetitionSubscription = {
         id: string,
         CompetitionID: string,
         content: string,
-        talkTime?: string | null,
+        talkTime?: number | null,
         createdAt: string,
         updatedAt: string,
       } | null > | null,
@@ -1027,7 +1224,7 @@ export type OnCreateCommentSubscription = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1051,7 +1248,7 @@ export type OnUpdateCommentSubscription = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1075,7 +1272,40 @@ export type OnDeleteCommentSubscription = {
       updatedAt: string,
     } | null,
     content: string,
-    talkTime?: string | null,
+    talkTime?: number | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateStampSubscription = {
+  onCreateStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateStampSubscription = {
+  onUpdateStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteStampSubscription = {
+  onDeleteStamp?:  {
+    __typename: "Stamp",
+    id: string,
+    CompetitionID: string,
+    stampID: string,
     createdAt: string,
     updatedAt: string,
   } | null,

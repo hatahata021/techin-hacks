@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
-import { AppBar, Grid, Typography, Box } from "@material-ui/core";
+import { AppBar, Grid, Typography, Box, IconButton } from "@material-ui/core";
 import API, { GraphQLResult, graphqlOperation } from "@aws-amplify/api-graphql";
-import { getCompetition, listComments } from "./graphql/queries";
+import { getCompetition, commentsByDate } from "./graphql/queries";
 import { createComment } from "./graphql/mutations";
 import { onCreateComment } from "./graphql/subscriptions";
 import * as APIt from "./API";
@@ -12,6 +12,8 @@ import { useWindowSize } from "./useWindowSize";
 import CommentComponents from "./components/Comment";
 import { Stamps } from "./components/organisms/Stamps";
 import YouTube from "react-youtube";
+import { Comment } from "@material-ui/icons";
+import { theme } from "./theme";
 
 type SubscriptionValue = {
   data: APIt.OnCreateCommentSubscription;
@@ -29,6 +31,7 @@ function App() {
   const [comments, setComments] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const { id } = useParams<Params>();
+  const [isOpen, setIsOpen] = useState(false)
   const [createCommentInput, setCreateCommentInput] = useState<
     Partial<APIt.CreateCommentInput>
   >({ CompetitionID: id });
@@ -71,13 +74,13 @@ function App() {
   async function fetchListComments() {
     try {
       const result = (await API.graphql(
-        graphqlOperation(listComments, {
-          filter: { CompetitionID: { eq: id } },
-        } as APIt.ListCommentsQueryVariables)
-      )) as GraphQLResult<APIt.ListCommentsQuery>;
+        graphqlOperation(commentsByDate, {
+          CompetitionID: id,
+        } as APIt.CommentsByDateQueryVariables)
+      )) as GraphQLResult<APIt.CommentsByDateQuery>;
 
-      if (result.data?.listComments && result.data?.listComments.items) {
-        setComments(result.data.listComments.items);
+      if (result.data?.commentsByDate && result.data?.commentsByDate.items) {
+        setComments(result.data.commentsByDate.items);
       }
       console.log(result);
     } catch (err) {
@@ -114,39 +117,71 @@ function App() {
       graphqlOperation(createComment, {
         input: {
           ...createCommentInput,
-          talkTime: `${Math.floor(currentTime)}`,
+          talkTime: Math.floor(currentTime),
         } as APIt.CreateCommentInput,
       })
     )) as GraphQLResult<APIt.CreateCommentMutation>;
     console.log(response);
   };
 
+  const handleOnClickTalkTime = async (talkTime: number) => {
+    if (playerRef && playerRef.current) {
+      const player = playerRef.current.getInternalPlayer();
+      const time = await player.seekTo(talkTime, true);
+      await player.playVideo();
+    }
+  }
+
   if (!competition) {
     return <div>loading...</div>;
   }
+
+  const searchParams = (new URL(competition.url)).searchParams;
+  const videoId = searchParams.get("v")
 
   return (
     <div className="App">
       <header className="App-header">
         <AppBar color="primary">
-          <Box textAlign="start">
-            <Typography variant="h3">
-              {competition ? competition.title : ""} {currentTime}
+          <Box textAlign="start" px={3.5} py={1.5} >
+            <Typography variant="h5" >
+              {competition ? competition.title : ""}
             </Typography>
           </Box>
         </AppBar>
         <Box style={{ width: "100%" }}>
           <Box mt={7} />
           <Grid container style={{ width: "100%" }}>
-            <Grid item xs={2}>
-              <CommentComponents
-                height={height ? height - 56 : height}
-                comments={comments}
-                createComment={useCreateComment}
-                handleOnChange={handleOnChange}
-              />
-            </Grid>
-            <Grid item xs={8}>
+            {
+              isOpen ?
+                <Grid item xs={4}>
+                  <CommentComponents
+                    height={height ? height - 56 : height}
+                    comments={comments}
+                    onClick={() => { setIsOpen(false) }}
+                    createComment={useCreateComment}
+                    handleOnChange={handleOnChange}
+                    handleOnClickTalkTime={handleOnClickTalkTime}
+                  />
+                </Grid>
+                :
+                <Grid item xs={1}>
+                  <Box
+                    height={height ? height - 56 : height}
+                    bgcolor={theme.palette.grey[800]}
+                    sx={{ display: "flex", flexDirection: "column" }}
+                  >
+                    <Box m={1} display='flex' textAlign="start" width='24'>
+                      <IconButton color='secondary' size='medium' onClick={() => { setIsOpen(true) }}>
+                        <Comment />
+                      </IconButton>
+                    </Box>
+
+                  </Box>
+                </Grid>
+            }
+
+            <Grid item xs={isOpen ? 8 : 9}>
               {/* <iframe
                 width="100%"
                 height="100%"
@@ -161,7 +196,7 @@ function App() {
               ></video> */}
               <YouTube
                 ref={playerRef}
-                videoId="-0GfAas8O-8"
+                videoId={videoId ? videoId : "23EfsN7vEOA"}
                 opts={{
                   height: height ? `${height - 56}` : `${height}`,
                   width: "100%",
@@ -170,17 +205,17 @@ function App() {
                     autoplay: 1,
                   },
                 }}
-                onPlaybackRateChange={(event) => {
-                  console.log(event);
-                }}
-                onStateChange={(event) => {
-                  console.log(event);
-                }}
               ></YouTube>
             </Grid>
-            <Grid item xs={2}>
-              <Stamps height={height ? height : 300} />
-            </Grid>
+            {
+              isOpen ?
+                <>
+                </>
+                :
+                <Grid item xs={2}>
+                  <Stamps height={height ? height : 300} />
+                </Grid>
+            }
           </Grid>
         </Box>
       </header>

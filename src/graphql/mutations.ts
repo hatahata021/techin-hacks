@@ -290,3 +290,45 @@ export const deleteComment = /* GraphQL */ `
     }
   }
 `;
+export const createStamp = /* GraphQL */ `
+  mutation CreateStamp(
+    $input: CreateStampInput!
+    $condition: ModelStampConditionInput
+  ) {
+    createStamp(input: $input, condition: $condition) {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateStamp = /* GraphQL */ `
+  mutation UpdateStamp(
+    $input: UpdateStampInput!
+    $condition: ModelStampConditionInput
+  ) {
+    updateStamp(input: $input, condition: $condition) {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteStamp = /* GraphQL */ `
+  mutation DeleteStamp(
+    $input: DeleteStampInput!
+    $condition: ModelStampConditionInput
+  ) {
+    deleteStamp(input: $input, condition: $condition) {
+      id
+      CompetitionID
+      stampID
+      createdAt
+      updatedAt
+    }
+  }
+`;
