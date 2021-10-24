@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Typography, Box, Divider } from "@material-ui/core";
 import { OutlinedButton } from "../atoms/OutlinedButton";
-import { useAudio } from "react-use";
 
 interface Props {
   height: number;
@@ -15,16 +14,6 @@ type StampAudio = {
 
 export const Stamps: React.FC<Props> = (props) => {
   const height = props.height;
-  const audioUrl = "http://www.ne.jp/asahi/music/myuu/wave/hana.mp3";
-
-  const [playing, play, pause] = useAudio({
-    src: audioUrl,
-    autoPlay: true,
-  });
-
-  const onClick = async (stampList: StampAudio) => {
-    playing ? await pause : await play;
-  };
 
   const stampList: StampAudio[] = [
     {
@@ -61,7 +50,6 @@ export const Stamps: React.FC<Props> = (props) => {
 
   return (
     <Box height={height ? height - 56 : height} bgcolor="#FFFFFF">
-      {playing}
       <Box pt={1} />
       <Typography color="primary">スタンプ機能</Typography>
       <Box mt={1} />
@@ -70,12 +58,7 @@ export const Stamps: React.FC<Props> = (props) => {
         {stampList.map((stamp) => {
           return (
             <React.Fragment key={stamp.id}>
-              <OutlinedButton
-                onClick={() => {
-                  onClick(stamp);
-                }}
-                title={stamp.name}
-              />
+              <OutlinedButton url={stamp.url} title={stamp.name} />
               <Box mt={1} />
               {/* <audio className="audio-element">
                 <source src={stamp.url}></source>

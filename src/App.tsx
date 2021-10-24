@@ -94,19 +94,6 @@ function App() {
     });
   };
 
-  const playAudio = () => {
-    const audioEl = document.getElementsByClassName("audio-element")[0];
-    if (!audioEl) {
-      return;
-    }
-    // HTMLAudioElement
-    // @ts-ignore
-    // audioEl.play();
-  };
-  useEffect(() => {
-    playAudio();
-  });
-
   // Subscriptionを設定
   useEffect(() => {
     const client = API.graphql(
@@ -125,7 +112,10 @@ function App() {
   const useCreateComment = async () => {
     const response = (await API.graphql(
       graphqlOperation(createComment, {
-        input: createCommentInput as APIt.CreateCommentInput,
+        input: {
+          ...createCommentInput,
+          talkTime: `${Math.floor(currentTime)}`,
+        } as APIt.CreateCommentInput,
       })
     )) as GraphQLResult<APIt.CreateCommentMutation>;
     console.log(response);

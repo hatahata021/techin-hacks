@@ -27,33 +27,34 @@ const Comment = ({
     <Box
       height={height}
       bgcolor={theme.palette.grey[800]}
-      style={{ overflowY: "scroll" }}
-      p={2}
-      mb={2}
+      sx={{ display: "flex", flexDirection: "column" }}
     >
-      {comments &&
-        comments.map((comment) => (
-          <Box textAlign="start" key={comment.id}>
-            <Typography>
-              {dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm:ss")}
-            </Typography>
-            <Typography>
-              {comment.talkTime} {comment.content}
-            </Typography>
-          </Box>
-        ))}
-
-      <FormControl>
-        <Input
-          id="my-input"
-          aria-describedby="my-helper-text"
-          name={"content"}
-          onChange={handleOnChange}
-        />
-      </FormControl>
-      <Button color="primary" variant="contained" onClick={createComment}>
-        <Typography>うんちく</Typography>
-      </Button>
+      <Box sx={{ flexGrow: 1 }} style={{ overflowY: "scroll" }}>
+        {comments &&
+          comments.map((comment) => (
+            <Box textAlign="start" key={comment.id} mb={2} px={2}>
+              <Typography>
+                {dayjs(comment.createdAt).format("YYYY-MM-DD HH:mm:ss")}
+              </Typography>
+              <Typography>
+                {comment.talkTime} {comment.content}
+              </Typography>
+            </Box>
+          ))}
+      </Box>
+      <Box>
+        <FormControl>
+          <Input
+            id="my-input"
+            aria-describedby="my-helper-text"
+            name={"content"}
+            onChange={handleOnChange}
+          />
+        </FormControl>
+        <Button color="primary" variant="contained" onClick={createComment}>
+          <Typography>うんちく</Typography>
+        </Button>
+      </Box>
     </Box>
   );
 };
